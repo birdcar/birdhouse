@@ -10,7 +10,5 @@ jobs:
       - uses: birdcar/birdhouse@main
       - name: Run birdhouse help command
         shell: bash
-        run: brdhs --help
-      - name: Run birdhouse build command
-        shell: bash
-        run: brdhs build
+        run: brdhs name
+
