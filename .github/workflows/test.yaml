@@ -1,0 +1,13 @@
+name: Test the birdhouse CLI
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: birdcar/birdhouse@main
+      - name: Run birdhouse command
+        shell: bash
+        run: brdhs
