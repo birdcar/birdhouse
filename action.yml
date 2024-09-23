@@ -1,0 +1,20 @@
+name: "Birdhouse"
+description: "A productivity framework for the GitHub team"
+runs:
+  using: composite
+  steps:
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+    - name: Install Dependencies
+      shell: bash
+      run: bun install --cwd ${{github.action_path}}
+    - name: Build the CLI
+      shell: bash
+      run: bun build ${{github.action_path}}/src/index.ts --output ${{github.action_path}}/dist/brdhs
+    - name: Add birdhouse CLI to path
+      uses: actions/github-script@v7
+      with:
+        script: |
+          core.addPath("${{github.action_path}}/dist");
