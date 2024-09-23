@@ -10,5 +10,5 @@ jobs:
       - uses: birdcar/birdhouse@main
       - name: Run birdhouse help command
         shell: bash
-        run: brdhs name
+        run: bh hello name
 

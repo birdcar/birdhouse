@@ -1,20 +1,17 @@
-import { Command, Option, Cli } from 'clipanion';
+import { Cli, Builtins } from 'clipanion';
+import { HelloCommand } from './commands/hello';
 
-export class HelloCommand extends Command {
-  name = Option.String();
-
-  async execute() {
-    this.context.stdout.write(`Hello ${this.name}!\n`);
-  }
-}
-
-const [node, app, ...args] = process.argv;
+const [_node, _app, ...args] = process.argv;
 
 const cli = new Cli({
-  binaryLabel: `My Application`,
-  binaryName: `${node} ${app}`,
+  binaryLabel: `Birdhouse`,
+  binaryName: `bh`,
   binaryVersion: `1.0.0`,
+  enableColors: true,
 })
+
+cli.register(Builtins.HelpCommand)
+cli.register(Builtins.VersionCommand)
 
 cli.register(HelloCommand);
 cli.runExit(args);
