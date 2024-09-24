@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: birdcar/birdhouse@main
+      - uses: actions/checkout@v4
       - name: Run birdhouse help command
         shell: bash
         run: bh hello name
