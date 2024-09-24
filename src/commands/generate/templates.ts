@@ -1,4 +1,5 @@
 import nj from 'nunjucks';
+import { readFileSync, existsFileSync } from 'fs';
 
 interface EnvironmentContext {
   env: {
@@ -19,7 +20,9 @@ function loadTemplateContext(): EnvironmentContext {
 
   for (const key in process.env) {
     if (key === "GITHUB_EVENT_PATH") {
-      inputs.payload = process.env[key]
+      if (existsFileSync(process.env[key])) {
+        inputs.payload = JSON.parse(readFileSync(process.env[key], 'utf-8'))
+      }
     } else if (key.startsWith('GITHUB') || key.startsWith("RUNNER")) {
       inputs.gh[key] = process.env[key]
     } else {

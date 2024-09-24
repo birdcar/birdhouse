@@ -11,3 +11,11 @@ jobs:
       - name: Run birdhouse help command
         shell: bash
         run: bh hello name
+      - name: Generate a file from a template
+        shell: bash
+        run: bh generate path/to/test.md -t test.md
+      - name: Output the templated file
+        shell: bash
+        run: cat path/to/test.md
+        env:
+          YO_THIS_IS_A_VALUE: "Knocked loose mother fucker"
