@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "yolo": "npx npm-check-updates -u && npm install"
+    "yolo": "npx npm-check-updates -u && npm install",
+    "postinstall": "./build.sh"
   },
   "keywords": [],
   "author": "",
