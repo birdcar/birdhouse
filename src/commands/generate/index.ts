@@ -2,12 +2,13 @@ import { Command, Option } from 'clipanion'
 import { BaseCommand } from '../../utils/baseCommand';
 import { loadTemplate } from './templates';
 import * as path from "node:path"
+import { exists } from "node:fs/promises"
 import * as io from "@actions/io"
 
 export class GenerateCommand extends BaseCommand {
   static paths = [[`generate`], [`g`]]
 
-  outputPath = Option.String();
+  outputPaths = Option.Rest();
   templateName = Option.String(`-t,--template`,)
   #template = ""
 
@@ -31,25 +32,25 @@ export class GenerateCommand extends BaseCommand {
     `,
     examples: [
       ["Generate a file", "$0 {generate,g} path/to/file.ext"],
-      ["Generate a file from a template", "$0 {generate,g} path/to/file.ext --template=$TEMPLATE_NAME.EXT"],
+      ["Generate a file from a template located at .birdhouse/templates/journal.md", "$0 {generate,g} path/to/file.ext --template=journal.md"],
     ]
   })
 
   async execute() {
-    this.context.stdout.write(`Generateing a file at ${this.outputPath}!\n`);
-
-    const dir = path.dirname(this.outputPath)
-    const pathExists = await Bun.file(dir).exists()
-
 
     if (this.templateName) {
       this.#template = loadTemplate(this.templateName, this.config);
     }
 
-    if (!pathExists) {
-      await io.mkdirP(dir)
-    }
+    for (const fp of this.outputPaths) {
+      let dir = path.dirname(fp)
 
-    Bun.write(this.outputPath, this.#template)
+      if (!(await exists(dir))) {
+        await io.mkdirP(dir)
+      }
+
+      this.context.stdout.write(`Generateing a file at ${fp}!\n`);
+      Bun.write(fp, this.#template)
+    }
   }
 }
