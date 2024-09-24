@@ -11,4 +11,3 @@ jobs:
       - name: Run birdhouse help command
         shell: bash
         run: bh hello name
-

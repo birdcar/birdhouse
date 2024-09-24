@@ -1,6 +1,7 @@
-import { Command, Option, Usage } from 'clipanion'
+import { Command, Option } from 'clipanion'
+import { BaseCommand } from '../utils/baseCommand';
 
-export class HelloCommand extends Command {
+export class HelloCommand extends BaseCommand {
   static paths = [["hello"]]
   name = Option.String();
 
