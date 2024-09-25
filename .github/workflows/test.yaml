@@ -14,9 +14,12 @@ jobs:
         run: bh hello name
       - name: Generate a file from a template
         shell: bash
-        run: bh generate path/to/test.md -t test.md
-      - name: Output the templated file
-        shell: bash
-        run: cat path/to/test.md
+        run: bh generate path/{to,from}/test-{1..5}.md -t test.md
         env:
           YO_THIS_IS_A_VALUE: "Knocked loose mother fucker"
+      - name: List the directories created
+        shell: bash
+        run: ls path && ls path/to && ls path/from
+      - name: Check one file for output
+        shell: bash
+        run: cat path/to/test-1.md
