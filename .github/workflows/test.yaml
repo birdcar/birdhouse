@@ -23,3 +23,6 @@ jobs:
       - name: Check one file for output
         shell: bash
         run: cat path/to/test-1.md
+      - name: Check that the file has the custom env value in it
+        shell: bash
+        run: grep YO_THIS_IS_A_VALUE path/to/test-1.md
