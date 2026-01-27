@@ -1,4 +1,4 @@
-name: Auto Release
+name: Release
 
 on:
   pull_request:
@@ -6,12 +6,17 @@ on:
     branches: [main]
 
 jobs:
-  auto-release:
+  release:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: read
+      id-token: write
+
+    outputs:
+      version: ${{ steps.auto-release.outputs.version }}
+      skipped: ${{ steps.auto-release.outputs.skipped }}
 
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +24,65 @@ jobs:
           fetch-depth: 0
 
       - name: Auto Release
+        id: auto-release
         uses: birdcar/actions/auto-release@main
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           timezone: 'America/Chicago'
+
+  build:
+    needs: release
+    if: needs.release.outputs.skipped != 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.release.outputs.version }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run tests
+        run: bun test
+
+      - name: Build all platforms
+        run: bun run build:all
+
+      - name: Upload binaries to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: gh release upload "v$VERSION" dist/bh-linux-x64 dist/bh-linux-arm64 dist/bh-darwin-x64 dist/bh-darwin-arm64 dist/bh-win32-x64.exe
+
+  publish:
+    needs: [release, build]
+    if: needs.release.outputs.skipped != 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.release.outputs.version }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: bun run build
+
+      - name: Publish to NPM
+        run: bunx npm publish --provenance --access public
