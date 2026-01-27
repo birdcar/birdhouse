@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.8] - 2026-01-27
+
+### Added
+
+- **Husky** for git hooks management
+- **Pre-commit hook** that:
+- Blocks manual changes to `package.json` version field
+- Blocks manual changes to `CHANGELOG.md` version headers (e.g., `## [0.1.7]`)
+- Allows editing the `[Unreleased]` section in CHANGELOG.md
+- Skips checks in CI environments
+- Runs tests before commit
+- Provides clear error messages with bypass instructions
+
 ## [v0.1.7] - 2026-01-27
 
 ### Changed
