@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.9] - 2026-01-27
+
+### Changed
+
+- Removes symlinked README.md that was pointing to .github/README.md
+- Moves the actual README content to the root README.md file
+- Fixes npm publish issue where symlinks are not properly resolved
+
+### Fixed
+
+- npm publish now works correctly with README.md as a regular file instead of a symlink
+
 ## [v0.1.8] - 2026-01-27
 
 ### Added
