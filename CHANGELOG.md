@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.11] - 2026-01-27
+
+### Added
+
+- **npm/bun installation** - Document `npm install -g @birdcar/birdhouse` and `bunx` usage
+- **Local Usage section** - Document credential resolution chain (gh CLI → flags → env → git remote → prompts)
+- **Command flags** - Document `--token`, `--repo`, `--no-prompt` on `daily` and `migrate`
+- **Migrate `--from`** - Document option to specify source issue number
+- **Rituals documentation** - Document morning/evening/weekly-preview templates
+- **Template locations** - Added location column to templates table
+
+### Changed
+
+- Expanded command examples to show all available flags
+- Clarified that automatic GITHUB_TOKEN works (no PAT required)
+- Added permissions block to GitHub Action examples
+- README now accurately documents all CLI features including local usage
+
 ## [v0.1.10] - 2026-01-27
 
 ### Added
