@@ -1,13 +1,47 @@
 {
-  "name": "birdhouse",
+  "name": "@birdcar/birdhouse",
   "version": "0.1.0",
-  "module": "src/index.ts",
+  "description": "CLI tool for managing GitHub workflow templates",
+  "author": "birdcar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/birdcar/birdhouse.git"
+  },
+  "keywords": [
+    "github",
+    "actions",
+    "workflow",
+    "templates",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
-  "private": true,
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "birdhouse": "dist/index.js",
+    "bh": "dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --compile --outfile dist/bh",
+    "build": "bun build src/index.ts --outdir dist --target node --format esm && bun run build:types",
+    "build:types": "tsc -p tsconfig.build.json",
+    "build:bin": "bun build src/index.ts --compile --outfile dist/bh",
     "build:all": "bun run scripts/build-all.ts",
+    "prepublishOnly": "bun run build",
     "typecheck": "tsc --noEmit",
     "lint": "bun run typecheck",
     "test": "bun test",
