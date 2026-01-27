@@ -15,6 +15,15 @@ describe('createVariableResolver', () => {
       labels: ['daily-thread'],
       pinned: true,
     },
+    schedule: {
+      timezone: 'America/Chicago',
+      daily: '06:00',
+      rituals: {
+        morning: '06:00',
+        evening: '18:00',
+        weeklyPreview: '18:00',
+      },
+    },
     domains: ['body', 'mind', 'work'],
   };
 
