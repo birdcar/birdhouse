@@ -14,6 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **New schedule config options** - `schedule.rituals.workdayStartup` and `schedule.rituals.workdayShutdown` for configuring ritual times
 - **Updated rituals workflow** - Now supports all 5 Full Focus rituals (morning, workday-startup, workday-shutdown, evening, weekly-preview)
 
+## [v0.1.13] - 2026-01-27
+
+### Changed
+
+- Adds two missing Full Focus rituals: workday-startup and workday-shutdown
+- Updates config schema with new ritual time settings (`schedule.rituals.workdayStartup`, `schedule.rituals.workdayShutdown`)
+- Updates schedule generation for new cron expressions
+- Updates rituals workflow to support all 5 Full Focus rituals
+- [x] TypeScript compiles without errors
+- [x] All 170 tests pass
+- [x] README and CHANGELOG updated
+- [ ] Verify rituals workflow generates correct cron expressions after publish
+
 ## [v0.1.12] - 2026-01-27
 
 ### Changed
