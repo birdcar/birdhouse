@@ -1,0 +1,16 @@
+name: Daily Thread
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # 6 AM UTC daily
+  workflow_dispatch:
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: birdcar/birdhouse@main
+      - run: bh daily
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

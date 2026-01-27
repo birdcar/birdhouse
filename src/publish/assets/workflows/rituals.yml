@@ -1,0 +1,46 @@
+name: Rituals
+
+on:
+  schedule:
+    # Morning ritual - 6 AM UTC weekdays
+    - cron: '0 6 * * 1-5'
+    # Evening ritual - 6 PM UTC weekdays
+    - cron: '0 18 * * 1-5'
+    # Weekly preview - Sunday 6 PM UTC
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+    inputs:
+      ritual:
+        description: 'Ritual to run'
+        required: true
+        type: choice
+        options:
+          - morning
+          - evening
+          - weekly-preview
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: birdcar/birdhouse@main
+      - name: Determine ritual
+        id: ritual
+        run: |
+          if [ -n "${{ inputs.ritual }}" ]; then
+            echo "name=${{ inputs.ritual }}" >> $GITHUB_OUTPUT
+          else
+            HOUR=$(date -u +%H)
+            DAY=$(date -u +%u)
+            if [ "$DAY" = "0" ]; then
+              echo "name=weekly-preview" >> $GITHUB_OUTPUT
+            elif [ "$HOUR" -lt 12 ]; then
+              echo "name=morning" >> $GITHUB_OUTPUT
+            else
+              echo "name=evening" >> $GITHUB_OUTPUT
+            fi
+          fi
+      - run: bh ritual ${{ steps.ritual.outputs.name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
