@@ -83,6 +83,58 @@ Uses [Clipanion](https://mael.dev/clipanion/) for command parsing. Commands exte
 | `bh publish` | Publish workflows/templates to repo |
 | `bh migrate` | Migrate tasks between daily threads |
 
+### Command Flags
+
+Commands that interact with GitHub (`daily`, `migrate`) support these flags:
+
+| Flag | Description |
+|------|-------------|
+| `--token, -t` | GitHub token (overrides auto-detection) |
+| `--repo, -r` | Target repository in `owner/repo` format |
+| `--no-prompt` | Disable interactive credential prompts |
+| `--dry-run, -n` | Preview without making changes |
+
+The `migrate` command also supports `--from <issue>` to specify source issue number.
+
+## Local Usage
+
+When running locally (not in GitHub Actions), credentials resolve in order:
+
+1. **GitHub CLI** - `gh auth token` and repo context from `gh`
+2. **CLI flags** - `--token` and `--repo` override everything
+3. **Environment** - `GITHUB_TOKEN` and `GITHUB_REPOSITORY`
+4. **Git remote** - Parses `origin` URL to detect repository
+5. **Interactive prompts** - Asks for missing credentials (TTY only)
+
+```bash
+# Recommended: authenticate with gh CLI
+gh auth login
+bh daily
+
+# Or explicit credentials
+bh daily --token ghp_xxx --repo owner/name
+
+# Or via environment
+GITHUB_TOKEN=ghp_xxx GITHUB_REPOSITORY=owner/name bh daily
+
+# CI/scripts: disable prompts
+bh daily --no-prompt
+```
+
+### GitHub Actions
+
+In workflows, the automatic `GITHUB_TOKEN` works - no PAT required:
+
+```yaml
+permissions:
+  contents: read
+  issues: write
+steps:
+  - uses: actions/checkout@v4
+  - uses: birdcar/birdhouse@main
+  - run: bh daily
+```
+
 ## Dependencies
 
 ### Runtime
