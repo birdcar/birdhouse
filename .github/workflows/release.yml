@@ -23,6 +23,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: Auto Release
         id: auto-release
         uses: birdcar/actions/auto-release@main
@@ -30,27 +34,23 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           timezone: 'America/Chicago'
 
-      - name: Update package.json version
-        if: steps.auto-release.outputs.skipped != 'true'
-        env:
-          TAG: ${{ steps.auto-release.outputs.tag }}
-        run: |
-          VERSION="${TAG#v}"
-          jq --arg v "$VERSION" '.version = $v' package.json > package.json.tmp
-          mv package.json.tmp package.json
-
-      - name: Commit and update tag
+      - name: Bump package.json and update tag
         if: steps.auto-release.outputs.skipped != 'true'
         env:
           TAG: ${{ steps.auto-release.outputs.tag }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout main
+          git pull origin main
+          VERSION="${TAG#v}"
+          bunx npm version "$VERSION" --no-git-tag-version --allow-same-version
           git add package.json
-          git commit --amend --no-edit
+          git commit -m "chore: bump package.json to $VERSION"
           git tag -f "$TAG"
-          git push --force origin "$TAG"
           git push origin main
+          git push --force origin "$TAG"
 
   build:
     needs: release
