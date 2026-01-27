@@ -17,6 +17,8 @@ export const configSchema = t.isObject({
     daily: t.isString(),
     rituals: t.isObject({
       morning: t.isString(),
+      workdayStartup: t.isString(),
+      workdayShutdown: t.isString(),
       evening: t.isString(),
       weeklyPreview: t.isString(),
     }),

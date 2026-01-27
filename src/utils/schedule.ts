@@ -132,6 +132,8 @@ export function localTimeToSundayCron(time: string, timezone: string): string {
 export interface ScheduleCrons {
   daily: string;
   morningWeekdays: string;
+  workdayStartupWeekdays: string;
+  workdayShutdownWeekdays: string;
   eveningWeekdays: string;
   sundayEvening: string;
 }
@@ -144,6 +146,8 @@ export function generateScheduleCrons(schedule: {
   daily: string;
   rituals: {
     morning: string;
+    workdayStartup: string;
+    workdayShutdown: string;
     evening: string;
     weeklyPreview: string;
   };
@@ -151,6 +155,8 @@ export function generateScheduleCrons(schedule: {
   return {
     daily: localTimeToDailyCron(schedule.daily, schedule.timezone),
     morningWeekdays: localTimeToWeekdaysCron(schedule.rituals.morning, schedule.timezone),
+    workdayStartupWeekdays: localTimeToWeekdaysCron(schedule.rituals.workdayStartup, schedule.timezone),
+    workdayShutdownWeekdays: localTimeToWeekdaysCron(schedule.rituals.workdayShutdown, schedule.timezone),
     eveningWeekdays: localTimeToWeekdaysCron(schedule.rituals.evening, schedule.timezone),
     sundayEvening: localTimeToSundayCron(schedule.rituals.weeklyPreview, schedule.timezone),
   };

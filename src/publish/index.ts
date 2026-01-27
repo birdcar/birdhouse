@@ -62,6 +62,16 @@ export const PUBLISHABLE_ASSETS: PublishableAsset[] = [
     category: 'ritual',
   },
   {
+    source: 'rituals/workday-startup.md',
+    destination: '.birdhouse/rituals/workday-startup.md',
+    category: 'ritual',
+  },
+  {
+    source: 'rituals/workday-shutdown.md',
+    destination: '.birdhouse/rituals/workday-shutdown.md',
+    category: 'ritual',
+  },
+  {
     source: 'rituals/evening.md',
     destination: '.birdhouse/rituals/evening.md',
     category: 'ritual',
@@ -107,6 +117,8 @@ function interpolateSchedule(content: string, config: BirdhouseConfig): string {
   return content
     .replace(/\{\{schedule\.daily\}\}/g, crons.daily)
     .replace(/\{\{schedule\.morningWeekdays\}\}/g, crons.morningWeekdays)
+    .replace(/\{\{schedule\.workdayStartupWeekdays\}\}/g, crons.workdayStartupWeekdays)
+    .replace(/\{\{schedule\.workdayShutdownWeekdays\}\}/g, crons.workdayShutdownWeekdays)
     .replace(/\{\{schedule\.eveningWeekdays\}\}/g, crons.eveningWeekdays)
     .replace(/\{\{schedule\.sundayEvening\}\}/g, crons.sundayEvening);
 }

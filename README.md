@@ -86,6 +86,8 @@ steps:
      daily: '06:00'
      rituals:
        morning: '06:00'
+       workdayStartup: '09:00'
+       workdayShutdown: '17:00'
        evening: '18:00'
        weeklyPreview: '18:00'
    domains:
@@ -208,6 +210,8 @@ Configuration lives in `.birdhouse/config.yaml`:
 | `schedule.timezone` | string | IANA timezone (e.g., `America/New_York`) |
 | `schedule.daily` | string | Daily thread creation time (`HH:MM`) |
 | `schedule.rituals.morning` | string | Morning ritual time |
+| `schedule.rituals.workdayStartup` | string | Workday startup ritual time |
+| `schedule.rituals.workdayShutdown` | string | Workday shutdown ritual time |
 | `schedule.rituals.evening` | string | Evening ritual time |
 | `schedule.rituals.weeklyPreview` | string | Weekly preview time |
 | `domains` | string[] | Life domains to track |
@@ -254,6 +258,8 @@ Rituals are scheduled check-in templates triggered by the `rituals.yml` workflow
 | Ritual | Location | Purpose |
 |--------|----------|---------|
 | `morning.md` | `.birdhouse/rituals/` | Morning intention setting (weekdays) |
+| `workday-startup.md` | `.birdhouse/rituals/` | Workday startup - prioritize your Big 3 (weekdays) |
+| `workday-shutdown.md` | `.birdhouse/rituals/` | Workday shutdown - review progress, prep for tomorrow (weekdays) |
 | `evening.md` | `.birdhouse/rituals/` | Evening reflection (weekdays) |
 | `weekly-preview.md` | `.birdhouse/rituals/` | Sunday evening week preview |
 
