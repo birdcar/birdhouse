@@ -12,6 +12,15 @@ export const configSchema = t.isObject({
     labels: t.isArray(t.isString()),
     pinned: t.isBoolean(),
   }),
+  schedule: t.isObject({
+    timezone: t.isString(),
+    daily: t.isString(),
+    rituals: t.isObject({
+      morning: t.isString(),
+      evening: t.isString(),
+      weeklyPreview: t.isString(),
+    }),
+  }),
   domains: t.isArray(t.isString()),
 });
 
