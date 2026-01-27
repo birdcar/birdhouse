@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.10] - 2026-01-27
+
+### Added
+
+- CLAUDE.md with comprehensive project documentation for AI agents
+- AGENTS.md symlink for alternative naming convention
+
+### Changed
+
+- Adds comprehensive `CLAUDE.md` with project context for AI agents
+- Creates `AGENTS.md` symlink pointing to `CLAUDE.md`
+- Quick reference commands
+- Project structure overview
+- Architecture documentation (CLI framework, config, GitHub integration, templates)
+- Code conventions (TypeScript, testing, error handling)
+- Command reference table
+- Dependencies documentation
+- Build and release process (including automated release workflow)
+- Environment variables
+- Common tasks (adding commands, config options, GitHub API usage)
+- Troubleshooting guide
+
 ## [v0.1.9] - 2026-01-27
 
 ### Changed
