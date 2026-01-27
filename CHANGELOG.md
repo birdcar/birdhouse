@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.12] - 2026-01-27
+
+### Changed
+
+- Added command flags table (`--token`, `--repo`, `--no-prompt`, `--dry-run`, `--from`)
+- Added Local Usage section with credential resolution chain
+- Added GitHub Actions example with permissions block
+- CLAUDE.md now includes local usage and command flag documentation
+
 ## [v0.1.11] - 2026-01-27
 
 ### Added
