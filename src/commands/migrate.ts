@@ -31,10 +31,21 @@ export class MigrateCommand extends Command {
     description: 'Preview migration without making changes',
   });
 
+  token = Option.String('--token,-t', {
+    description: 'GitHub token (default: from gh CLI or GITHUB_TOKEN)',
+  });
+
+  repo = Option.String('--repo,-r', {
+    description: 'Target repository (owner/repo format)',
+  });
+
   async execute(): Promise<number> {
     try {
       const config = await loadConfig();
-      const client = getGitHubClient();
+      const client = await getGitHubClient({
+        token: this.token,
+        repo: this.repo,
+      });
       const dailyLabel = config.daily.labels[0]!;
 
       // Find source issue

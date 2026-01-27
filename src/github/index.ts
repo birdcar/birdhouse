@@ -1,4 +1,5 @@
 import * as github from '@actions/github';
+import { resolveCredentials } from '../credentials/index.js';
 
 type OctokitInstance = ReturnType<typeof github.getOctokit>;
 
@@ -8,29 +9,21 @@ export interface GitHubClient {
   repo: string;
 }
 
-export function getGitHubClient(): GitHubClient {
-  const token = process.env.GITHUB_TOKEN;
-  if (!token) {
-    throw new Error(
-      'GITHUB_TOKEN environment variable required for GitHub operations.'
-    );
-  }
+export interface GitHubClientOptions {
+  token?: string;
+  repo?: string;
+}
 
-  const octokit = github.getOctokit(token);
+export async function getGitHubClient(
+  options: GitHubClientOptions = {}
+): Promise<GitHubClient> {
+  const credentials = await resolveCredentials(options);
 
-  const repoEnv = process.env.GITHUB_REPOSITORY;
-  if (!repoEnv) {
-    throw new Error(
-      'GITHUB_REPOSITORY environment variable required (format: owner/repo).'
-    );
-  }
+  const octokit = github.getOctokit(credentials.token);
 
-  const [owner, repo] = repoEnv.split('/');
-  if (!owner || !repo) {
-    throw new Error(
-      'GITHUB_REPOSITORY must be in format: owner/repo'
-    );
-  }
-
-  return { octokit, owner, repo };
+  return {
+    octokit,
+    owner: credentials.owner,
+    repo: credentials.repo,
+  };
 }

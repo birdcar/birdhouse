@@ -26,6 +26,14 @@ export class DailyCommand extends Command {
     description: 'Preview issue without creating',
   });
 
+  token = Option.String('--token,-t', {
+    description: 'GitHub token (default: from gh CLI or GITHUB_TOKEN)',
+  });
+
+  repo = Option.String('--repo,-r', {
+    description: 'Target repository (owner/repo format)',
+  });
+
   async execute(): Promise<number> {
     try {
       const config = await loadConfig();
@@ -48,7 +56,10 @@ export class DailyCommand extends Command {
         return 0;
       }
 
-      const client = getGitHubClient();
+      const client = await getGitHubClient({
+        token: this.token,
+        repo: this.repo,
+      });
 
       // Find and unpin previous daily thread
       if (config.daily.pinned) {
