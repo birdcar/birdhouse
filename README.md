@@ -17,9 +17,25 @@ A GitHub-native productivity CLI that automates daily routines and task manageme
 
 - [Bun](https://bun.sh) runtime (for development/local use)
 - A GitHub repository to manage
-- GitHub token with repo access (for API operations)
+- GitHub CLI (`gh`) authenticated, or `GITHUB_TOKEN` environment variable (for local API operations)
 
 ### Installation
+
+**Via npm (recommended):**
+
+```bash
+npm install -g @birdcar/birdhouse
+# or
+bun add -g @birdcar/birdhouse
+```
+
+**Run without installing:**
+
+```bash
+npx @birdcar/birdhouse daily
+# or
+bunx @birdcar/birdhouse daily
+```
 
 **From Source:**
 
@@ -33,9 +49,14 @@ bun run build
 **As GitHub Action:**
 
 ```yaml
-- uses: birdcar/birdhouse@main
-  with:
-    token: ${{ secrets.GITHUB_TOKEN }}
+# In your workflow job:
+permissions:
+  contents: read
+  issues: write
+steps:
+  - uses: actions/checkout@v4
+  - uses: birdcar/birdhouse@main
+  - run: bh daily
 ```
 
 ### Quick Start
@@ -112,8 +133,11 @@ bh render daily --var name=value     # Pass custom variables
 Create today's Daily Thread issue on GitHub.
 
 ```bash
-bh daily           # Create and optionally pin the issue
-bh daily --dry-run # Preview without creating
+bh daily                        # Create and optionally pin the issue
+bh daily --dry-run              # Preview without creating
+bh daily --token <token>        # Use specific GitHub token
+bh daily --repo owner/name      # Target specific repository
+bh daily --no-prompt            # Disable interactive prompts
 ```
 
 ### `bh publish`
@@ -135,8 +159,37 @@ bh publish --commit          # Auto-commit changes
 Migrate incomplete tasks from the previous Daily Thread to the current one.
 
 ```bash
-bh migrate           # Migrate tasks
-bh migrate --dry-run # Preview migration
+bh migrate                      # Migrate from most recently closed thread
+bh migrate --from 123           # Migrate from specific issue number
+bh migrate --dry-run            # Preview migration without changes
+bh migrate --token <token>      # Use specific GitHub token
+bh migrate --repo owner/name    # Target specific repository
+bh migrate --no-prompt          # Disable interactive prompts
+```
+
+## Local Usage
+
+When running Birdhouse locally (not in GitHub Actions), credentials are resolved in this order:
+
+1. **GitHub CLI** - If `gh` is installed and authenticated, uses its token and detects repo
+2. **CLI flags** - `--token` and `--repo` flags override other sources
+3. **Environment variables** - `GITHUB_TOKEN` and `GITHUB_REPOSITORY`
+4. **Git remote** - Parses `origin` remote URL to detect repository
+5. **Interactive prompts** - Asks for missing credentials (TTY only)
+
+```bash
+# Simplest: authenticate with gh CLI first
+gh auth login
+bh daily
+
+# Or provide credentials explicitly
+bh daily --token ghp_xxx --repo owner/name
+
+# Or via environment
+GITHUB_TOKEN=ghp_xxx GITHUB_REPOSITORY=owner/name bh daily
+
+# Disable prompts for CI/scripts
+bh daily --no-prompt
 ```
 
 ## Configuration
@@ -188,11 +241,21 @@ Templates use `{{ variable }}` syntax for interpolation.
 
 ### Default Templates
 
-| Template | Purpose |
-|----------|---------|
-| `daily.md` | Daily standup with "Big Three" priorities |
-| `weekly.md` | Weekly review and planning |
-| `quarterly.md` | Quarterly goals and reflection |
+| Template | Location | Purpose |
+|----------|----------|---------|
+| `daily.md` | `.birdhouse/templates/` | Daily standup with "Big Three" priorities |
+| `weekly.md` | `.birdhouse/templates/` | Weekly review and planning |
+| `quarterly.md` | `.birdhouse/templates/` | Quarterly goals and reflection |
+
+### Rituals
+
+Rituals are scheduled check-in templates triggered by the `rituals.yml` workflow:
+
+| Ritual | Location | Purpose |
+|--------|----------|---------|
+| `morning.md` | `.birdhouse/rituals/` | Morning intention setting (weekdays) |
+| `evening.md` | `.birdhouse/rituals/` | Evening reflection (weekdays) |
+| `weekly-preview.md` | `.birdhouse/rituals/` | Sunday evening week preview |
 
 ## Task Management
 
@@ -235,19 +298,30 @@ on:
 jobs:
   create:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     steps:
       - uses: actions/checkout@v4
-
       - uses: birdcar/birdhouse@main
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - run: bh daily
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-The action automatically downloads the appropriate binary for your platform (Linux x64, macOS x64/ARM64, Windows x64).
+The action automatically:
+- Downloads the appropriate binary for your platform (Linux x64, macOS x64/ARM64, Windows x64)
+- Uses the automatic `GITHUB_TOKEN` provided by Actions (no PAT required)
+- Sets up the token for both the action and subsequent `bh` commands
+
+### Permissions
+
+Birdhouse needs these permissions to manage issues:
+
+| Permission | Access | Required For |
+|------------|--------|--------------|
+| `contents` | `read` | Checkout repository |
+| `issues` | `write` | Create, update, and pin issues |
+
+> **Note:** The workflow uses GitHub's automatic `GITHUB_TOKEN`, not a Personal Access Token. The token is automatically available to the action and CLI commands.
 
 ## Published Workflows
 
