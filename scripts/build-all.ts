@@ -5,6 +5,7 @@ const targets = [
   { name: 'darwin-x64', target: 'bun-darwin-x64' },
   { name: 'linux-arm64', target: 'bun-linux-arm64' },
   { name: 'linux-x64', target: 'bun-linux-x64' },
+  { name: 'win32-x64.exe', target: 'bun-windows-x64' },
 ];
 
 console.log('Building for all platforms...\n');
