@@ -45,7 +45,7 @@ jobs:
           git checkout main
           git pull origin main
           VERSION="${TAG#v}"
-          bunx npm version "$VERSION" --no-git-tag-version --allow-same-version
+          bun pm version "$VERSION" --no-git-tag-version --allow-same-version
           git add package.json
           git commit -m "chore: bump package.json to $VERSION"
           git tag -f "$TAG"
@@ -96,6 +96,11 @@ jobs:
         with:
           ref: ${{ needs.release.outputs.tag }}
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -107,4 +112,4 @@ jobs:
         run: bun run build
 
       - name: Publish to NPM
-        run: bunx npm publish --provenance --access public
+        run: npm publish --provenance --access public
