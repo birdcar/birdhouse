@@ -1,4 +1,6 @@
 import { join } from 'path';
+import type { BirdhouseConfig } from '../config/schema.js';
+import { generateScheduleCrons } from '../utils/schedule.js';
 
 export interface PublishableAsset {
   source: string; // Path relative to assets/
@@ -79,12 +81,34 @@ export const PUBLISHABLE_ASSETS: PublishableAsset[] = [
 ];
 
 export async function getAssetContent(
-  asset: PublishableAsset
+  asset: PublishableAsset,
+  config?: BirdhouseConfig
 ): Promise<string> {
   // Assets are in src/publish/assets/ relative to this file
   const assetsDir = join(import.meta.dir, 'assets');
   const file = Bun.file(join(assetsDir, asset.source));
-  return file.text();
+  let content = await file.text();
+
+  // Interpolate schedule placeholders for workflow files
+  if (asset.category === 'workflow' && config) {
+    content = interpolateSchedule(content, config);
+  }
+
+  return content;
+}
+
+/**
+ * Interpolate schedule placeholders in workflow content.
+ * Replaces {{schedule.daily}}, {{schedule.morningWeekdays}}, etc.
+ */
+function interpolateSchedule(content: string, config: BirdhouseConfig): string {
+  const crons = generateScheduleCrons(config.schedule);
+
+  return content
+    .replace(/\{\{schedule\.daily\}\}/g, crons.daily)
+    .replace(/\{\{schedule\.morningWeekdays\}\}/g, crons.morningWeekdays)
+    .replace(/\{\{schedule\.eveningWeekdays\}\}/g, crons.eveningWeekdays)
+    .replace(/\{\{schedule\.sundayEvening\}\}/g, crons.sundayEvening);
 }
 
 export interface FilterOptions {

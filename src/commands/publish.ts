@@ -7,6 +7,7 @@ import {
   filterAssets,
   type PublishableAsset,
 } from '../publish/index.js';
+import { loadConfig } from '../config/index.js';
 import { getRepoRoot } from '../utils/paths.js';
 import { logger } from '../utils/logger.js';
 
@@ -51,6 +52,7 @@ export class PublishCommand extends Command {
   });
 
   async execute(): Promise<number> {
+    const config = await loadConfig();
     const assets = filterAssets(PUBLISHABLE_ASSETS, {
       workflows: this.workflowsOnly,
       templates: this.templatesOnly,
@@ -94,7 +96,7 @@ export class PublishCommand extends Command {
       const dir = dirname(destPath);
       await mkdir(dir, { recursive: true });
 
-      const content = await getAssetContent(asset);
+      const content = await getAssetContent(asset, config);
       await Bun.write(destPath, content);
       published.push(asset.destination);
     }
