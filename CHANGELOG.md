@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.6] - 2026-01-27
+
+### Changed
+
+- Use `bunx npm version` instead of `jq` for cleaner version updates
+- Add bun setup to the release job
+- Pull latest main before bumping to avoid push conflicts
+
+### Fixed
+
+- Release job now properly updates package.json and syncs main branch
+
 ## [v0.1.5] - 2026-01-27
 
 ### Fixed
