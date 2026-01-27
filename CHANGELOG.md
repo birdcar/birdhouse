@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.3] - 2026-01-27
+
+### Changed
+
+- `release.yml` - auto-release (creates tag + release)
+- `build.yml` - triggered by tag push
+- `publish.yml` - triggered by release published
+- Merged `build.yml` and `publish.yml` into `release.yml`
+- Removed separate `build.yml` and `publish.yml` workflows
+
 ## [v0.1.2] - 2026-01-27
 
 ### Added
