@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.4] - 2026-01-27
+
+### Fixed
+
+- Build job checkout now uses correct tag reference
+- Publish job checkout now uses correct tag reference
+- Binary upload now uses correct tag for release
+
 ## [v0.1.3] - 2026-01-27
 
 ### Changed
