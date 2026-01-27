@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.1.2] - 2026-01-27
+
+### Added
+
+- **CHANGELOG.md** in [Keep a Changelog](https://keepachangelog.com/) format with existing release history
+- **Auto-release workflow** that triggers on PR merge and:
+- Bumps version based on `release.*` labels (major/minor/patch)
+- Updates CHANGELOG.md automatically
+- Creates and pushes git tags
+- **Build workflow** triggered by version tags that:
+- Creates GitHub releases from changelog content
+- Builds platform binaries (linux/darwin/win32, x64/arm64)
+- Uploads binaries to releases via `gh` CLI
+- **NPM publish workflow** with OIDC trusted publishing (no token secrets required)
+- **Release labels** (`release.major`, `release.minor`, `release.patch`, `release.skip`, etc.)
+
+### Changed
+
+- Release workflow now uses `birdcar/actions/auto-release` instead of manual version management
+
 ## [0.1.1] - 2025-01-26
 
 ### Added
