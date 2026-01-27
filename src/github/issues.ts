@@ -73,6 +73,32 @@ export async function unpinIssue(
   );
 }
 
+export async function getIssue(
+  client: GitHubClient,
+  issueNumber: number
+): Promise<{ body: string | null; title: string }> {
+  const { data } = await client.octokit.rest.issues.get({
+    owner: client.owner,
+    repo: client.repo,
+    issue_number: issueNumber,
+  });
+
+  return { body: data.body ?? null, title: data.title };
+}
+
+export async function updateIssue(
+  client: GitHubClient,
+  issueNumber: number,
+  updates: { body?: string; title?: string }
+): Promise<void> {
+  await client.octokit.rest.issues.update({
+    owner: client.owner,
+    repo: client.repo,
+    issue_number: issueNumber,
+    ...updates,
+  });
+}
+
 export async function findPinnedDailyThread(
   client: GitHubClient,
   label: string = 'daily-thread'
