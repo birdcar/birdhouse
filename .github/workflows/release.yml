@@ -30,6 +30,28 @@ jobs:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           timezone: 'America/Chicago'
 
+      - name: Update package.json version
+        if: steps.auto-release.outputs.skipped != 'true'
+        env:
+          TAG: ${{ steps.auto-release.outputs.tag }}
+        run: |
+          VERSION="${TAG#v}"
+          jq --arg v "$VERSION" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+
+      - name: Commit and update tag
+        if: steps.auto-release.outputs.skipped != 'true'
+        env:
+          TAG: ${{ steps.auto-release.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit --amend --no-edit
+          git tag -f "$TAG"
+          git push --force origin "$TAG"
+          git push origin main
+
   build:
     needs: release
     if: needs.release.outputs.skipped != 'true'
