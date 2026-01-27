@@ -1,0 +1,38 @@
+{
+  "name": "birdhouse",
+  "version": "0.1.0",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --compile --outfile dist/bh",
+    "build:all": "bun run scripts/build-all.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "bun run typecheck",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@actions/artifact": "^5.0.3",
+    "@actions/attest": "^2.2.1",
+    "@actions/cache": "^5.0.4",
+    "@actions/core": "^2.0.3",
+    "@actions/exec": "^2.0.0",
+    "@actions/github": "^8.0.1",
+    "@actions/glob": "^0.5.0",
+    "@actions/http-client": "^3.0.2",
+    "@actions/io": "^2.0.0",
+    "@actions/tool-cache": "^3.0.1",
+    "clipanion": "^4.0.0-rc.4",
+    "isomorphic-git": "^1.36.3",
+    "typanion": "^3.14.0",
+    "yaml": "^2.8.2"
+  }
+}
