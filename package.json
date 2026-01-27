@@ -1,6 +1,6 @@
 {
   "name": "@birdcar/birdhouse",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "CLI tool for managing GitHub workflow templates",
   "author": "birdcar",
   "license": "MIT",
