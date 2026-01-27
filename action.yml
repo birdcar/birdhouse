@@ -1,0 +1,21 @@
+name: 'Birdhouse'
+description: 'Install Birdhouse CLI for GitHub-based productivity workflows'
+author: 'birdcar'
+
+branding:
+  icon: 'home'
+  color: 'blue'
+
+inputs:
+  version:
+    description: 'Version of Birdhouse to install (default: latest)'
+    required: false
+    default: 'latest'
+  token:
+    description: 'GitHub token for API operations'
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: 'node20'
+  main: 'dist/action/index.js'
