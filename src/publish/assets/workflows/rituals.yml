@@ -2,12 +2,12 @@ name: Rituals
 
 on:
   schedule:
-    # Morning ritual - 6 AM UTC weekdays
-    - cron: '0 6 * * 1-5'
-    # Evening ritual - 6 PM UTC weekdays
-    - cron: '0 18 * * 1-5'
-    # Weekly preview - Sunday 6 PM UTC
-    - cron: '0 18 * * 0'
+    # Morning ritual - weekdays
+    - cron: '{{schedule.morningWeekdays}}'
+    # Evening ritual - weekdays
+    - cron: '{{schedule.eveningWeekdays}}'
+    # Weekly preview - Sunday evening
+    - cron: '{{schedule.sundayEvening}}'
   workflow_dispatch:
     inputs:
       ritual:

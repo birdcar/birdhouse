@@ -2,7 +2,7 @@ name: Daily Thread
 
 on:
   schedule:
-    - cron: '0 6 * * *' # 6 AM UTC daily
+    - cron: '{{schedule.daily}}'
   workflow_dispatch:
 
 jobs:
