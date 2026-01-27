@@ -19,6 +19,8 @@ schedule:
   daily: '06:00'
   rituals:
     morning: '06:00'
+    workdayStartup: '09:00'
+    workdayShutdown: '17:00'
     evening: '18:00'
     weeklyPreview: '18:00'
 domains:

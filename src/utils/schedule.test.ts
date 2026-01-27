@@ -105,6 +105,8 @@ describe('generateScheduleCrons', () => {
       daily: '06:00',
       rituals: {
         morning: '07:00',
+        workdayStartup: '09:00',
+        workdayShutdown: '17:00',
         evening: '18:00',
         weeklyPreview: '17:00',
       },
@@ -114,6 +116,8 @@ describe('generateScheduleCrons', () => {
 
     expect(crons.daily).toBe('0 6 * * *');
     expect(crons.morningWeekdays).toBe('0 7 * * 1-5');
+    expect(crons.workdayStartupWeekdays).toBe('0 9 * * 1-5');
+    expect(crons.workdayShutdownWeekdays).toBe('0 17 * * 1-5');
     expect(crons.eveningWeekdays).toBe('0 18 * * 1-5');
     expect(crons.sundayEvening).toBe('0 17 * * 0');
   });
@@ -126,6 +130,8 @@ describe('generateScheduleCrons', () => {
       daily: '06:00',
       rituals: {
         morning: '06:00',
+        workdayStartup: '09:00',
+        workdayShutdown: '17:00',
         evening: '18:00',
         weeklyPreview: '18:00',
       },
@@ -135,6 +141,8 @@ describe('generateScheduleCrons', () => {
 
     expect(crons.daily).toBe('0 12 * * *');
     expect(crons.morningWeekdays).toBe('0 12 * * 1-5');
+    expect(crons.workdayStartupWeekdays).toBe('0 15 * * 1-5'); // 09:00 + 6 = 15:00
+    expect(crons.workdayShutdownWeekdays).toBe('0 23 * * 1-5'); // 17:00 + 6 = 23:00
     expect(crons.eveningWeekdays).toBe('0 0 * * 1-5'); // 18:00 + 6 = 24:00 = 0:00
     expect(crons.sundayEvening).toBe('0 0 * * 0');
   });

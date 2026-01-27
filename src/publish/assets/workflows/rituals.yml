@@ -4,6 +4,10 @@ on:
   schedule:
     # Morning ritual - weekdays
     - cron: '{{schedule.morningWeekdays}}'
+    # Workday startup - weekdays
+    - cron: '{{schedule.workdayStartupWeekdays}}'
+    # Workday shutdown - weekdays
+    - cron: '{{schedule.workdayShutdownWeekdays}}'
     # Evening ritual - weekdays
     - cron: '{{schedule.eveningWeekdays}}'
     # Weekly preview - Sunday evening
@@ -16,12 +20,17 @@ on:
         type: choice
         options:
           - morning
+          - workday-startup
+          - workday-shutdown
           - evening
           - weekly-preview
 
 jobs:
   run:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     steps:
       - uses: actions/checkout@v4
       - uses: birdcar/birdhouse@main
@@ -35,12 +44,16 @@ jobs:
             DAY=$(date -u +%u)
             if [ "$DAY" = "0" ]; then
               echo "name=weekly-preview" >> $GITHUB_OUTPUT
-            elif [ "$HOUR" -lt 12 ]; then
+            elif [ "$HOUR" -lt 9 ]; then
               echo "name=morning" >> $GITHUB_OUTPUT
+            elif [ "$HOUR" -lt 12 ]; then
+              echo "name=workday-startup" >> $GITHUB_OUTPUT
+            elif [ "$HOUR" -lt 18 ]; then
+              echo "name=workday-shutdown" >> $GITHUB_OUTPUT
             else
               echo "name=evening" >> $GITHUB_OUTPUT
             fi
           fi
-      - run: bh ritual ${{ steps.ritual.outputs.name }}
+      - run: bh render .birdhouse/rituals/${{ steps.ritual.outputs.name }}.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Workday startup ritual** (`workday-startup.md`) - Prioritize your Big 3, check calendar, and prepare for focused work
+- **Workday shutdown ritual** (`workday-shutdown.md`) - Review progress on Big 3, process loose ends, and mentally transition out of work mode
+- **New schedule config options** - `schedule.rituals.workdayStartup` and `schedule.rituals.workdayShutdown` for configuring ritual times
+- **Updated rituals workflow** - Now supports all 5 Full Focus rituals (morning, workday-startup, workday-shutdown, evening, weekly-preview)
+
 ## [v0.1.11] - 2026-01-27
 
 ### Added
