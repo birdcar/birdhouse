@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# Skip in CI environments
+if [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ]; then
+  exit 0
+fi
+
+# Check if package.json version was changed
+if git diff --cached --name-only | grep -q "^package.json$"; then
+  # Get the staged version vs the committed version
+  STAGED_VERSION=$(git show :package.json | jq -r .version 2>/dev/null)
+  CURRENT_VERSION=$(git show HEAD:package.json | jq -r .version 2>/dev/null)
+
+  if [ "$STAGED_VERSION" != "$CURRENT_VERSION" ] && [ -n "$CURRENT_VERSION" ]; then
+    echo "❌ Error: Manual changes to package.json version are not allowed."
+    echo ""
+    echo "   Current version: $CURRENT_VERSION"
+    echo "   Staged version:  $STAGED_VERSION"
+    echo ""
+    echo "   Versions are managed automatically by the release workflow."
+    echo "   To release a new version, merge a PR with a release.* label."
+    echo ""
+    echo "   To bypass this check (not recommended): git commit --no-verify"
+    exit 1
+  fi
+fi
+
+# Check if CHANGELOG.md version headers were changed (not [Unreleased])
+if git diff --cached --name-only | grep -q "^CHANGELOG.md$"; then
+  # Check for changes to version headers (lines starting with ## [x.x.x])
+  # Exclude [Unreleased] which is fine to edit
+  CHANGED_VERSIONS=$(git diff --cached CHANGELOG.md | grep "^[+-]## \[" | grep -v "\[Unreleased\]" || true)
+
+  if [ -n "$CHANGED_VERSIONS" ]; then
+    echo "❌ Error: Manual changes to CHANGELOG.md version headers are not allowed."
+    echo ""
+    echo "   Changed lines:"
+    echo "$CHANGED_VERSIONS" | sed 's/^/   /'
+    echo ""
+    echo "   Version headers are managed automatically by the release workflow."
+    echo "   You can edit the [Unreleased] section to document changes."
+    echo ""
+    echo "   To bypass this check (not recommended): git commit --no-verify"
+    exit 1
+  fi
+fi
+
+# Run tests
+bun test
