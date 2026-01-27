@@ -32,7 +32,13 @@
     "@actions/tool-cache": "^3.0.1",
     "clipanion": "^4.0.0-rc.4",
     "isomorphic-git": "^1.36.3",
+    "remark": "^15.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-stringify": "^11.0.0",
     "typanion": "^3.14.0",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0",
     "yaml": "^2.8.2"
   }
 }
