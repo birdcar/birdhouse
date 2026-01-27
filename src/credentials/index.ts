@@ -1,4 +1,6 @@
 import { getTokenFromGhCli, getRepoFromGhCli } from './gh-cli.js';
+import { getRepoFromGitRemote } from './git-remote.js';
+import { isTTY, promptToken, promptRepo } from './prompt.js';
 
 export interface Credentials {
   token: string;
@@ -10,6 +12,7 @@ export interface CredentialOptions {
   token?: string; // From --token flag
   repo?: string; // From --repo flag (owner/repo format)
   skipGhCli?: boolean; // For testing
+  noPrompt?: boolean; // From --no-prompt flag
 }
 
 export class CredentialResolutionError extends Error {
@@ -24,7 +27,7 @@ export class CredentialResolutionError extends Error {
 
 /**
  * Resolve GitHub credentials from multiple sources.
- * Resolution chain: gh CLI → CLI flags → environment variables.
+ * Resolution chain: gh CLI → CLI flags → environment variables → git remote → interactive prompts.
  * Throws CredentialResolutionError with helpful message if unresolved.
  */
 export async function resolveCredentials(
@@ -56,7 +59,7 @@ export async function resolveCredentials(
     }
   }
 
-  // 3. Environment variables as final fallback
+  // 3. Environment variables
   if (!token && process.env.GITHUB_TOKEN) {
     token = process.env.GITHUB_TOKEN;
   }
@@ -68,7 +71,39 @@ export async function resolveCredentials(
     }
   }
 
-  // 4. Check for missing fields
+  // 4. Git remote for repo (before prompts)
+  if (!owner || !repo) {
+    const gitRemote = await getRepoFromGitRemote();
+    if (gitRemote) {
+      owner = gitRemote.owner;
+      repo = gitRemote.repo;
+    }
+  }
+
+  // 5. Interactive prompts (TTY only, unless --no-prompt)
+  if (!options.noPrompt && isTTY()) {
+    if (!token) {
+      try {
+        token = await promptToken();
+      } catch {
+        // User cancelled or timeout - continue to error
+      }
+    }
+    if (!owner || !repo) {
+      try {
+        const input = await promptRepo();
+        const [promptOwner, promptRepoName] = input.split('/');
+        if (promptOwner && promptRepoName) {
+          owner = promptOwner;
+          repo = promptRepoName;
+        }
+      } catch {
+        // User cancelled or timeout - continue to error
+      }
+    }
+  }
+
+  // 6. Check for missing fields
   const missing: ('token' | 'repo')[] = [];
   if (!token) missing.push('token');
   if (!owner || !repo) missing.push('repo');
@@ -76,14 +111,17 @@ export async function resolveCredentials(
   if (missing.length > 0) {
     throw new CredentialResolutionError(
       missing,
-      buildCredentialErrorMessage(missing)
+      buildCredentialErrorMessage(missing, options.noPrompt ?? !isTTY())
     );
   }
 
   return { token: token!, owner: owner!, repo: repo! };
 }
 
-function buildCredentialErrorMessage(missing: ('token' | 'repo')[]): string {
+function buildCredentialErrorMessage(
+  missing: ('token' | 'repo')[],
+  isNonInteractive: boolean
+): string {
   const lines = ['GitHub credentials required but not found.', ''];
 
   if (missing.includes('token')) {
@@ -98,7 +136,13 @@ function buildCredentialErrorMessage(missing: ('token' | 'repo')[]): string {
   lines.push('  2. Flags: --token <token> --repo <owner/repo>');
   lines.push('  3. Environment: GITHUB_TOKEN and GITHUB_REPOSITORY');
 
+  if (isNonInteractive) {
+    lines.push('', 'Note: Interactive prompts disabled (non-TTY or --no-prompt)');
+  }
+
   return lines.join('\n');
 }
 
 export { getTokenFromGhCli, getRepoFromGhCli, isGhCliAvailable } from './gh-cli.js';
+export { getRepoFromGitRemote, parseGitHubUrl } from './git-remote.js';
+export { isTTY } from './prompt.js';

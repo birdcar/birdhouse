@@ -39,12 +39,17 @@ export class MigrateCommand extends Command {
     description: 'Target repository (owner/repo format)',
   });
 
+  noPrompt = Option.Boolean('--no-prompt', false, {
+    description: 'Disable interactive credential prompts',
+  });
+
   async execute(): Promise<number> {
     try {
       const config = await loadConfig();
       const client = await getGitHubClient({
         token: this.token,
         repo: this.repo,
+        noPrompt: this.noPrompt,
       });
       const dailyLabel = config.daily.labels[0]!;
 

@@ -12,6 +12,7 @@ export interface GitHubClient {
 export interface GitHubClientOptions {
   token?: string;
   repo?: string;
+  noPrompt?: boolean;
 }
 
 export async function getGitHubClient(
