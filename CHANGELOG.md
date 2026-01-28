@@ -14,6 +14,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **New schedule config options** - `schedule.rituals.workdayStartup` and `schedule.rituals.workdayShutdown` for configuring ritual times
 - **Updated rituals workflow** - Now supports all 5 Full Focus rituals (morning, workday-startup, workday-shutdown, evening, weekly-preview)
 
+## [v0.1.14] - 2026-01-28
+
+### Changed
+
+- Add `pr-label-check` workflow to auto-apply `release.patch` when no release label found
+- Simplify pre-commit hook to only run tests (remove validation)
+- Update release workflow to use keep-a-changelog merge behavior
+- Update CLAUDE.md documentation for new release process
+- Add platform-specific packages: darwin-arm64, darwin-x64, linux-arm64, linux-x64, win32-x64
+- Add main `birdhouse` package with optionalDependencies and wrapper script
+- Add `scripts/prepare-npm.ts` to copy binaries and sync versions at publish time
+- Platform binaries are gitignored (copied from `dist/` at publish time)
+- [x] Unit tests pass (`bun test`)
+- [ ] Create PR without release label → verify `release.patch` auto-applied
+- [ ] End-to-end release test after auto-release action PR is merged
+
 ## [v0.1.13] - 2026-01-27
 
 ### Changed
