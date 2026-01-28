@@ -5,35 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Added
-
-- **Install script** (`install.sh`) - One-liner installation via `curl -fsSL https://raw.githubusercontent.com/birdcar/birdhouse/main/install.sh | sh`
-- **SHA256 checksums** - All release binaries now include SHA256SUMS for verification
-- **Workday startup ritual** (`workday-startup.md`) - Prioritize your Big 3, check calendar, and prepare for focused work
-- **Workday shutdown ritual** (`workday-shutdown.md`) - Review progress on Big 3, process loose ends, and mentally transition out of work mode
-- **New schedule config options** - `schedule.rituals.workdayStartup` and `schedule.rituals.workdayShutdown` for configuring ritual times
-
-### Changed
-
-- Updated rituals workflow to support all 5 Full Focus rituals (morning, workday-startup, workday-shutdown, evening, weekly-preview)
+Changelog entries are generated automatically from PR titles when releases are created.
 
 ## [v0.1.18] - 2026-01-28
 
-### Changed
+### Added
 
-- Created `birdcar/homebrew-tap` repository with formula for birdhouse
-- Formula supports macOS (arm64/x64) and Linux (arm64/x64)
-- Added schedule-based polling workflow that checks daily for new releases
-- Added Homebrew installation instructions to README
-- Added optional Homebrew update trigger to release process in CLAUDE.md
-- [x] `brew tap birdcar/tap` succeeds
-- [x] `brew install birdcar/tap/birdhouse` installs correctly
-- [x] `bh --version` returns expected version
-- [x] `birdhouse --version` symlink works
-- [x] `brew test birdhouse` passes
-- [x] `brew audit --strict birdcar/tap/birdhouse` passes
+- Homebrew tap for binary distribution (`brew tap birdcar/tap && brew install birdhouse`)
+- Homebrew installation instructions in README
+- Optional Homebrew update trigger in release process
 
 ## [v0.1.17] - 2026-01-28
 
@@ -46,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Release workflow now generates and uploads checksums with binaries
-- Clean up changelog formatting
 
 ## [v0.1.16] - 2026-01-28
 
@@ -82,7 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update config schema with new ritual time settings (`schedule.rituals.workdayStartup`, `schedule.rituals.workdayShutdown`)
+- Update config schema with new ritual time settings
 - Update schedule generation for new cron expressions
 - Update rituals workflow to support all 5 Full Focus rituals
 
@@ -93,49 +72,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added command flags table (`--token`, `--repo`, `--no-prompt`, `--dry-run`, `--from`)
 - Added Local Usage section with credential resolution chain
 - Added GitHub Actions example with permissions block
-- CLAUDE.md now includes local usage and command flag documentation
 
 ## [v0.1.11] - 2026-01-27
 
 ### Added
 
-- **npm/bun installation** - Document `npm install -g @birdcar/birdhouse` and `bunx` usage
-- **Local Usage section** - Document credential resolution chain (gh CLI → flags → env → git remote → prompts)
-- **Command flags** - Document `--token`, `--repo`, `--no-prompt` on `daily` and `migrate`
-- **Migrate `--from`** - Document option to specify source issue number
-- **Rituals documentation** - Document morning/evening/weekly-preview templates
-- **Template locations** - Added location column to templates table
+- npm/bun installation documentation
+- Local Usage section with credential resolution chain
+- Command flags documentation
+- Rituals documentation
 
 ### Changed
 
 - Expanded command examples to show all available flags
 - Clarified that automatic GITHUB_TOKEN works (no PAT required)
-- Added permissions block to GitHub Action examples
 
 ## [v0.1.10] - 2026-01-27
 
 ### Added
 
 - CLAUDE.md with comprehensive project documentation for AI agents
-- AGENTS.md symlink for alternative naming convention
 
 ## [v0.1.9] - 2026-01-27
 
 ### Changed
 
-- Removes symlinked README.md that was pointing to .github/README.md
-- Moves the actual README content to the root README.md file
+- Moves README content to root (was symlinked to .github/README.md)
 
 ### Fixed
 
-- npm publish now works correctly with README.md as a regular file instead of a symlink
+- npm publish now works correctly with README.md as a regular file
 
 ## [v0.1.8] - 2026-01-27
 
 ### Added
 
-- **Husky** for git hooks management
-- **Pre-commit hook** that runs tests before commit and skips checks in CI environments
+- Husky for git hooks management
+- Pre-commit hook that runs tests before commit
 
 ## [v0.1.7] - 2026-01-27
 
@@ -160,7 +133,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - package.json version now matches release tag
-- npm publish should succeed with correct version
 
 ## [v0.1.4] - 2026-01-27
 
@@ -181,15 +153,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **CHANGELOG.md** in [Keep a Changelog](https://keepachangelog.com/) format
-- **Auto-release workflow** triggered on PR merge with version bumping based on labels
-- **Build workflow** that creates GitHub releases and builds platform binaries
-- **NPM publish workflow** with OIDC trusted publishing
-- **Release labels** (`release.major`, `release.minor`, `release.patch`, `release.skip`)
-
-### Changed
-
-- Release workflow now uses `birdcar/actions/auto-release`
+- CHANGELOG.md in Keep a Changelog format
+- Auto-release workflow triggered on PR merge with version bumping based on labels
+- Build workflow that creates GitHub releases and builds platform binaries
+- NPM publish workflow with OIDC trusted publishing
 
 ## [0.1.1] - 2025-01-26
 
@@ -205,9 +172,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 - CLI tool for managing GitHub workflow templates
-- Support for listing and installing workflow templates from birdcar/actions
 
-[Unreleased]: https://github.com/birdcar/birdhouse/compare/v0.1.17...HEAD
+[v0.1.18]: https://github.com/birdcar/birdhouse/compare/v0.1.17...v0.1.18
 [v0.1.17]: https://github.com/birdcar/birdhouse/compare/v0.1.16...v0.1.17
 [v0.1.16]: https://github.com/birdcar/birdhouse/compare/v0.1.15...v0.1.16
 [v0.1.15]: https://github.com/birdcar/birdhouse/compare/v0.1.14...v0.1.15

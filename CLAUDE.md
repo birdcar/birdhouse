@@ -207,19 +207,17 @@ If you need to modify the publish job, preserve this pattern:
 
 **Self-healing behavior:**
 - Manual changes to `package.json` version are overwritten by the tag
-- Manual changelog entries in `[Unreleased]` are preserved and merged
 - No validation gates that can fail - the workflow handles everything
 
 ### Pre-commit Hooks
 
 Husky runs tests before each commit. Bypass with `git commit --no-verify` (not recommended).
 
-### Changelog Format
+### Changelog
 
-Uses [Keep a Changelog](https://keepachangelog.com/) format:
-- Add entries under `## [Unreleased]`
-- Categories: Added, Changed, Deprecated, Removed, Fixed, Security
-- Auto-release merges unreleased + PR info into versioned section
+- Entries are generated automatically from PR titles
+- Use conventional commit prefixes: `feat:`, `fix:`, `docs:`, `chore:`
+- No manual changelog editing required - just write good PR titles
 
 ## Environment Variables
 
