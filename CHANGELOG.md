@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **New schedule config options** - `schedule.rituals.workdayStartup` and `schedule.rituals.workdayShutdown` for configuring ritual times
 - **Updated rituals workflow** - Now supports all 5 Full Focus rituals (morning, workday-startup, workday-shutdown, evening, weekly-preview)
 
+## [v0.1.16] - 2026-01-28
+
+### Changed
+
+- Verify that auto binary publishing works with OIDC Trusted Publishing configured on npm
+- [ ] Merge PR and verify publish job succeeds with OIDC authentication
+
 ## [v0.1.15] - 2026-01-28
 
 ### Changed
