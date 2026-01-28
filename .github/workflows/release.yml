@@ -129,8 +129,6 @@ jobs:
         run: bun run build:npm
 
       - name: Publish platform packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cd npm/birdhouse-darwin-arm64 && npm publish --provenance --access public
           cd ../birdhouse-darwin-x64 && npm publish --provenance --access public
@@ -139,6 +137,4 @@ jobs:
           cd ../birdhouse-win32-x64 && npm publish --provenance --access public
 
       - name: Publish main package
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: cd npm/birdhouse && npm publish --provenance --access public

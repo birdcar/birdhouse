@@ -159,6 +159,28 @@ bun run build:bin    # Build standalone binary
 bun run build:all    # Build all platform binaries
 ```
 
+### ⚠️ CRITICAL: Do Not Break the Release Workflow
+
+The release workflow (`.github/workflows/release.yml`) uses **npm OIDC Trusted Publishing** for authentication. This means:
+
+- **NEVER add `NODE_AUTH_TOKEN` or `NPM_TOKEN` environment variables** to npm publish steps
+- Setting these variables (even empty) breaks OIDC authentication
+- npm authenticates automatically via GitHub's OIDC token - no explicit token needed
+- The workflow has `id-token: write` permission which enables this
+
+If you need to modify the publish job, preserve this pattern:
+```yaml
+# CORRECT - no token, OIDC handles auth
+- name: Publish
+  run: npm publish --provenance --access public
+
+# WRONG - breaks OIDC auth
+- name: Publish
+  env:
+    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  # DO NOT ADD THIS
+  run: npm publish --provenance --access public
+```
+
 ### Release Process
 
 **Automated via PR labels** - Versions are managed automatically.
