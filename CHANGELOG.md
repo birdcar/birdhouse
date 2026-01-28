@@ -19,6 +19,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated rituals workflow to support all 5 Full Focus rituals (morning, workday-startup, workday-shutdown, evening, weekly-preview)
 
+## [v0.1.18] - 2026-01-28
+
+### Changed
+
+- Created `birdcar/homebrew-tap` repository with formula for birdhouse
+- Formula supports macOS (arm64/x64) and Linux (arm64/x64)
+- Added schedule-based polling workflow that checks daily for new releases
+- Added Homebrew installation instructions to README
+- Added optional Homebrew update trigger to release process in CLAUDE.md
+- [x] `brew tap birdcar/tap` succeeds
+- [x] `brew install birdcar/tap/birdhouse` installs correctly
+- [x] `bh --version` returns expected version
+- [x] `birdhouse --version` symlink works
+- [x] `brew test birdhouse` passes
+- [x] `brew audit --strict birdcar/tap/birdhouse` passes
+
 ## [v0.1.17] - 2026-01-28
 
 ### Added
