@@ -1,0 +1,19 @@
+{
+  "name": "@birdcar/birdhouse-darwin-arm64",
+  "version": "0.0.0",
+  "description": "birdhouse binary for macOS ARM64",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "bin": {
+    "bh": "bin/bh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/birdcar/birdhouse.git"
+  },
+  "license": "MIT"
+}

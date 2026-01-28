@@ -161,37 +161,38 @@ bun run build:all    # Build all platform binaries
 
 ### Release Process
 
-**Automated via PR labels** - Do NOT manually edit versions.
+**Automated via PR labels** - Versions are managed automatically.
 
 1. Create PR with changes
-2. Add appropriate label:
+2. Release label is auto-applied if missing:
+   - No label → auto-applies `release.patch`
    - `release.major` / `release.breaking` - Breaking changes
    - `release.minor` / `release.feature` - New features
    - `release.patch` / `release.fix` - Bug fixes
-   - `release.skip` - No release needed
+   - `release.skip` / `skip-release` / `no-release` - Explicit opt-out
 3. Merge PR to `main`
 4. Workflow automatically:
-   - Updates CHANGELOG.md
+   - Merges `[Unreleased]` changelog entries with PR info
    - Creates git tag and GitHub release
-   - Bumps package.json version
+   - Sets package.json version from tag (overwrites any manual changes)
    - Builds platform binaries
    - Publishes to npm (OIDC trusted publishing)
 
+**Self-healing behavior:**
+- Manual changes to `package.json` version are overwritten by the tag
+- Manual changelog entries in `[Unreleased]` are preserved and merged
+- No validation gates that can fail - the workflow handles everything
+
 ### Pre-commit Hooks
 
-Husky enforces:
-- No manual changes to `package.json` version field
-- No manual changes to CHANGELOG.md version headers (edit `[Unreleased]` only)
-- Tests must pass
-
-Bypass with `git commit --no-verify` (not recommended).
+Husky runs tests before each commit. Bypass with `git commit --no-verify` (not recommended).
 
 ### Changelog Format
 
 Uses [Keep a Changelog](https://keepachangelog.com/) format:
 - Add entries under `## [Unreleased]`
 - Categories: Added, Changed, Deprecated, Removed, Fixed, Security
-- Auto-release moves unreleased to versioned section
+- Auto-release merges unreleased + PR info into versioned section
 
 ## Environment Variables
 

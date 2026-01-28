@@ -4,11 +4,12 @@ import { RenderCommand } from './commands/render.js';
 import { DailyCommand } from './commands/daily.js';
 import { PublishCommand } from './commands/publish.js';
 import { MigrateCommand } from './commands/migrate.js';
+import pkg from '../package.json' with { type: 'json' };
 
 const cli = new Cli({
   binaryLabel: 'Birdhouse',
   binaryName: 'bh',
-  binaryVersion: process.env.npm_package_version ?? '0.0.0',
+  binaryVersion: pkg.version,
 });
 
 cli.register(Builtins.HelpCommand);

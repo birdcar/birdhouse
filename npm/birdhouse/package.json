@@ -1,0 +1,21 @@
+{
+  "name": "@birdcar/birdhouse",
+  "version": "0.0.0",
+  "description": "CLI tool for managing GitHub workflow templates",
+  "bin": {
+    "birdhouse": "bin/bh",
+    "bh": "bin/bh"
+  },
+  "optionalDependencies": {
+    "@birdcar/birdhouse-darwin-arm64": "0.0.0",
+    "@birdcar/birdhouse-darwin-x64": "0.0.0",
+    "@birdcar/birdhouse-linux-arm64": "0.0.0",
+    "@birdcar/birdhouse-linux-x64": "0.0.0",
+    "@birdcar/birdhouse-win32-x64": "0.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/birdcar/birdhouse.git"
+  },
+  "license": "MIT"
+}

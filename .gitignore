@@ -6,6 +6,9 @@ out
 dist
 *.tgz
 
+# npm platform package binaries (replaced at publish time)
+npm/birdhouse-*/bin/
+
 # code coverage
 coverage
 *.lcov
