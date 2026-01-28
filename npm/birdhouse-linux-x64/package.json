@@ -1,0 +1,19 @@
+{
+  "name": "@birdcar/birdhouse-linux-x64",
+  "version": "0.0.0",
+  "description": "birdhouse binary for Linux x64",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "bin": {
+    "bh": "bin/bh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/birdcar/birdhouse.git"
+  },
+  "license": "MIT"
+}

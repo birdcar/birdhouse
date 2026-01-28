@@ -45,7 +45,7 @@ jobs:
           git checkout main
           git pull origin main
           VERSION="${TAG#v}"
-          bun pm version "$VERSION" --no-git-tag-version --allow-same-version
+          bun pm version "$VERSION" --no-git-tag-version
           git add package.json
           git commit -m "chore: bump package.json to $VERSION"
           git tag -f "$TAG"
@@ -83,6 +83,17 @@ jobs:
           TAG: ${{ needs.release.outputs.tag }}
         run: gh release upload "$TAG" dist/bh-linux-x64 dist/bh-linux-arm64 dist/bh-darwin-x64 dist/bh-darwin-arm64 dist/bh-win32-x64.exe
 
+      - name: Upload binaries as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binaries
+          path: |
+            dist/bh-darwin-arm64
+            dist/bh-darwin-x64
+            dist/bh-linux-arm64
+            dist/bh-linux-x64
+            dist/bh-win32-x64.exe
+
   publish:
     needs: [release, build]
     if: needs.release.outputs.skipped != 'true'
@@ -108,8 +119,26 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Build
-        run: bun run build
+      - name: Download built binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: binaries
+          path: dist/
 
-      - name: Publish to NPM
-        run: npm publish --provenance --access public
+      - name: Prepare npm packages
+        run: bun run build:npm
+
+      - name: Publish platform packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          cd npm/birdhouse-darwin-arm64 && npm publish --provenance --access public
+          cd ../birdhouse-darwin-x64 && npm publish --provenance --access public
+          cd ../birdhouse-linux-arm64 && npm publish --provenance --access public
+          cd ../birdhouse-linux-x64 && npm publish --provenance --access public
+          cd ../birdhouse-win32-x64 && npm publish --provenance --access public
+
+      - name: Publish main package
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd npm/birdhouse && npm publish --provenance --access public

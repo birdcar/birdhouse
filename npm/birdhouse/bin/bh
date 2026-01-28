@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+
+const { execFileSync } = require('child_process');
+const { existsSync } = require('fs');
+const { join } = require('path');
+
+const PLATFORMS = {
+  'darwin-arm64': '@birdcar/birdhouse-darwin-arm64',
+  'darwin-x64': '@birdcar/birdhouse-darwin-x64',
+  'linux-arm64': '@birdcar/birdhouse-linux-arm64',
+  'linux-x64': '@birdcar/birdhouse-linux-x64',
+  'win32-x64': '@birdcar/birdhouse-win32-x64',
+};
+
+function getBinaryPath() {
+  const platform = `${process.platform}-${process.arch}`;
+  const pkg = PLATFORMS[platform];
+
+  if (!pkg) {
+    console.error(`Unsupported platform: ${platform}`);
+    console.error(`Supported platforms: ${Object.keys(PLATFORMS).join(', ')}`);
+    process.exit(1);
+  }
+
+  // Try to find the package
+  try {
+    const pkgPath = require.resolve(`${pkg}/package.json`);
+    const binName = process.platform === 'win32' ? 'bh.exe' : 'bh';
+    const binPath = join(pkgPath, '..', 'bin', binName);
+    if (existsSync(binPath)) {
+      return binPath;
+    }
+  } catch {}
+
+  console.error(`Could not find binary for platform: ${platform}`);
+  console.error(`Expected package: ${pkg}`);
+  console.error('Try reinstalling: npm install @birdcar/birdhouse');
+  process.exit(1);
+}
+
+const binary = getBinaryPath();
+const args = process.argv.slice(2);
+
+try {
+  execFileSync(binary, args, { stdio: 'inherit' });
+} catch (error) {
+  if (error.status !== undefined) {
+    process.exit(error.status);
+  }
+  throw error;
+}
