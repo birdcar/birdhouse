@@ -19,6 +19,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated rituals workflow to support all 5 Full Focus rituals (morning, workday-startup, workday-shutdown, evening, weekly-preview)
 
+## [v0.1.17] - 2026-01-28
+
+### Changed
+
+- Add `install.sh` for one-liner binary installation via `curl | sh`
+- Add `scripts/generate-checksums.ts` to create SHA256SUMS file for release verification
+- Update release workflow to generate and upload checksums with binaries
+- Clean up changelog: remove task checklist cruft, fix comparison links
+- Detects platform (macOS, Linux, Windows via Git Bash)
+- Detects architecture (x64, arm64)
+- Downloads correct binary from latest GitHub release
+- Verifies SHA256 checksum before installing
+- Supports custom install directory via `INSTALL_DIR` env var
+- [x] `bun run build:all` succeeds
+- [x] `bun run scripts/generate-checksums.ts` generates valid SHA256SUMS
+- [x] `sh -n install.sh` passes syntax check
+- [x] `bun test` passes (170 tests)
+- [x] `bun run typecheck` passes
+- [ ] Release workflow runs successfully after merge
+
 ## [v0.1.16] - 2026-01-28
 
 ### Changed
