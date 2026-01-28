@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Verify that auto binary publishing works with OIDC Trusted Publishing
+
 ### Added
 
 - **Workday startup ritual** (`workday-startup.md`) - Prioritize your Big 3, check calendar, and prepare for focused work
