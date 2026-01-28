@@ -21,23 +21,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v0.1.17] - 2026-01-28
 
+### Added
+
+- Install script (`install.sh`) for one-liner binary installation via `curl | sh`
+- SHA256 checksum verification in install script
+- `scripts/generate-checksums.ts` to create SHA256SUMS file for releases
+
 ### Changed
 
-- Add `install.sh` for one-liner binary installation via `curl | sh`
-- Add `scripts/generate-checksums.ts` to create SHA256SUMS file for release verification
-- Update release workflow to generate and upload checksums with binaries
-- Clean up changelog: remove task checklist cruft, fix comparison links
-- Detects platform (macOS, Linux, Windows via Git Bash)
-- Detects architecture (x64, arm64)
-- Downloads correct binary from latest GitHub release
-- Verifies SHA256 checksum before installing
-- Supports custom install directory via `INSTALL_DIR` env var
-- [x] `bun run build:all` succeeds
-- [x] `bun run scripts/generate-checksums.ts` generates valid SHA256SUMS
-- [x] `sh -n install.sh` passes syntax check
-- [x] `bun test` passes (170 tests)
-- [x] `bun run typecheck` passes
-- [ ] Release workflow runs successfully after merge
+- Release workflow now generates and uploads checksums with binaries
+- Clean up changelog formatting
 
 ## [v0.1.16] - 2026-01-28
 
@@ -198,7 +191,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CLI tool for managing GitHub workflow templates
 - Support for listing and installing workflow templates from birdcar/actions
 
-[Unreleased]: https://github.com/birdcar/birdhouse/compare/v0.1.16...HEAD
+[Unreleased]: https://github.com/birdcar/birdhouse/compare/v0.1.17...HEAD
+[v0.1.17]: https://github.com/birdcar/birdhouse/compare/v0.1.16...v0.1.17
 [v0.1.16]: https://github.com/birdcar/birdhouse/compare/v0.1.15...v0.1.16
 [v0.1.15]: https://github.com/birdcar/birdhouse/compare/v0.1.14...v0.1.15
 [v0.1.14]: https://github.com/birdcar/birdhouse/compare/v0.1.13...v0.1.14

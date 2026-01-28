@@ -29,6 +29,13 @@ npm install -g @birdcar/birdhouse
 bun add -g @birdcar/birdhouse
 ```
 
+**Via Homebrew (macOS/Linux):**
+
+```bash
+brew tap birdcar/tap
+brew install birdhouse
+```
+
 **Run without installing:**
 
 ```bash
