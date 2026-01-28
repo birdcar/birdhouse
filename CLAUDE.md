@@ -199,6 +199,11 @@ If you need to modify the publish job, preserve this pattern:
    - Sets package.json version from tag (overwrites any manual changes)
    - Builds platform binaries
    - Publishes to npm (OIDC trusted publishing)
+5. (Optional) Trigger Homebrew formula update immediately:
+   ```bash
+   gh workflow run update-formula.yml --repo birdcar/homebrew-tap
+   ```
+   The homebrew-tap also polls daily at 6am UTC, so this is only needed if you want the update right away.
 
 **Self-healing behavior:**
 - Manual changes to `package.json` version are overwritten by the tag
