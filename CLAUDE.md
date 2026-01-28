@@ -194,8 +194,7 @@ If you need to modify the publish job, preserve this pattern:
    - `release.skip` / `skip-release` / `no-release` - Explicit opt-out
 3. Merge PR to `main`
 4. Workflow automatically:
-   - Merges `[Unreleased]` changelog entries with PR info
-   - Creates git tag and GitHub release
+   - Creates git tag and GitHub release from PR title
    - Sets package.json version from tag (overwrites any manual changes)
    - Builds platform binaries
    - Publishes to npm (OIDC trusted publishing)
@@ -204,6 +203,28 @@ If you need to modify the publish job, preserve this pattern:
    gh workflow run update-formula.yml --repo birdcar/homebrew-tap
    ```
    The homebrew-tap also polls daily at 6am UTC, so this is only needed if you want the update right away.
+
+### PR Format
+
+**IMPORTANT:** The PR title becomes the changelog entry. Keep it clean and descriptive.
+
+```
+## Summary
+Brief description of what changed and why.
+
+---
+(Everything below the --- is ignored in releases)
+
+## Test plan
+- [ ] Tests pass
+- [ ] Manual verification done
+```
+
+**Rules for PRs:**
+- Do NOT add "Generated with Claude Code" or similar attribution
+- Do NOT put task checklists above the `---` separator
+- The PR title should follow conventional commits (`feat:`, `fix:`, `docs:`, `chore:`)
+- Only content above `---` may appear in changelogs
 
 **Self-healing behavior:**
 - Manual changes to `package.json` version are overwritten by the tag
