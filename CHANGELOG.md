@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Changelog entries are generated automatically from PR titles when releases are created.
 
+## [0.1.20] - 2026-01-29
+### Added
+- Documentation in CLAUDE.md explaining how to properly handle static assets in bundled builds
+
+### Fixed
+- `bh publish` command now works correctly in bundled npm packages and compiled binaries
+- Assets are inlined at build time instead of read from filesystem at runtime
+
 ## [0.1.19] - 2026-01-28
 ### Changed
 - Remove Unreleased section from CHANGELOG.md
@@ -134,6 +142,7 @@ Changelog entries are generated automatically from PR titles when releases are c
 - Initial release
 - CLI tool for managing GitHub workflow templates
 
+[0.1.20]: https://github.com/birdcar/birdhouse/compare/v0.1.19...v0.1.20
 [0.1.19]: https://github.com/birdcar/birdhouse/compare/v0.1.18...v0.1.19
 [0.1.18]: https://github.com/birdcar/birdhouse/compare/v0.1.17...v0.1.18
 [0.1.17]: https://github.com/birdcar/birdhouse/compare/v0.1.16...v0.1.17
