@@ -33,10 +33,6 @@ jobs:
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           timezone: 'America/Chicago'
-          majorLabels: 'release.major,release.breaking,major,breaking'
-          minorLabels: 'release.minor,release.feature,minor,feature,enhancement'
-          patchLabels: 'release.patch,release.fix,patch,fix,bugfix,bug'
-          skipLabels: 'release.skip,skip-release,no-release'
 
       - name: Bump package.json and update tag
         if: steps.auto-release.outputs.skipped != 'true'
