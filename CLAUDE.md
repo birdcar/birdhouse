@@ -36,19 +36,24 @@ src/
 
 ## Build & Release
 
-### ⚠️ CRITICAL: Static Assets Must Be Inlined
+### ⚠️ CRITICAL: Bundled Assets Must Be Inlined
 
-Bun's bundler does NOT include files read via `Bun.file()`. Static assets must be inlined as TypeScript strings.
+Assets **shipped with the CLI** (workflow templates, scaffold files) must be inlined as TypeScript strings because Bun's bundler doesn't include files read via `Bun.file()`.
+
+This does NOT apply to user files read at runtime (e.g., `.birdhouse/config.yaml`).
 
 ```typescript
-// BROKEN - file won't exist after bundling
+// BROKEN - bundled asset won't exist after compilation
 const content = await Bun.file(join(import.meta.dir, 'template.md')).text();
 
-// CORRECT - inline in src/publish/assets.ts
+// CORRECT - inline bundled assets in src/publish/assets.ts
 export const ASSET_CONTENTS = { 'template.md': `# Content...` };
+
+// FINE - user files are read from their filesystem at runtime
+const config = await Bun.file('.birdhouse/config.yaml').text();
 ```
 
-When adding publishable assets:
+When adding new publishable assets:
 1. Add file to `src/publish/assets/` for source control
 2. Add content to `ASSET_CONTENTS` in `src/publish/assets.ts`
 
