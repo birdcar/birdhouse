@@ -159,6 +159,30 @@ bun run build:bin    # Build standalone binary
 bun run build:all    # Build all platform binaries
 ```
 
+### ⚠️ CRITICAL: Static Assets Must Be Inlined
+
+Bun's bundler does NOT automatically include files read via `Bun.file()` or filesystem APIs. Static assets (templates, workflows, etc.) must be inlined as TypeScript strings to work in bundled/compiled builds.
+
+**DON'T** read assets from the filesystem at runtime:
+```typescript
+// BROKEN after bundling - file won't exist
+const assetsDir = join(import.meta.dir, 'assets');
+const content = await Bun.file(join(assetsDir, 'template.md')).text();
+```
+
+**DO** inline assets as code in `src/publish/assets.ts`:
+```typescript
+// WORKS - content is part of the bundle
+export const ASSET_CONTENTS: Record<string, string> = {
+  'templates/daily.md': `# Template content here...`,
+};
+```
+
+When adding new publishable assets:
+1. Add the file to `src/publish/assets/` for source control
+2. Add the content to `ASSET_CONTENTS` in `src/publish/assets.ts`
+3. Reference via the inlined map, not filesystem reads
+
 ### ⚠️ CRITICAL: Do Not Break the Release Workflow
 
 The release workflow (`.github/workflows/release.yml`) uses **npm OIDC Trusted Publishing** for authentication. This means:

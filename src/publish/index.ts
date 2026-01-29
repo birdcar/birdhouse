@@ -1,6 +1,6 @@
-import { join } from 'path';
 import type { BirdhouseConfig } from '../config/schema.js';
 import { generateScheduleCrons } from '../utils/schedule.js';
+import { ASSET_CONTENTS } from './assets.js';
 
 export interface PublishableAsset {
   source: string; // Path relative to assets/
@@ -94,14 +94,14 @@ export async function getAssetContent(
   asset: PublishableAsset,
   config?: BirdhouseConfig
 ): Promise<string> {
-  // Assets are in src/publish/assets/ relative to this file
-  const assetsDir = join(import.meta.dir, 'assets');
-  const file = Bun.file(join(assetsDir, asset.source));
-  let content = await file.text();
+  const content = ASSET_CONTENTS[asset.source];
+  if (!content) {
+    throw new Error(`Asset not found: ${asset.source}`);
+  }
 
   // Interpolate schedule placeholders for workflow files
   if (asset.category === 'workflow' && config) {
-    content = interpolateSchedule(content, config);
+    return interpolateSchedule(content, config);
   }
 
   return content;
