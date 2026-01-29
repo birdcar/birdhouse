@@ -15,10 +15,7 @@ jobs:
         with:
           script: |
             const labels = context.payload.pull_request.labels.map(l => l.name);
-            const releaseLabels = labels.filter(l =>
-              l.startsWith('release.') ||
-              ['major', 'minor', 'patch', 'breaking', 'feature', 'fix', 'skip-release', 'no-release'].includes(l)
-            );
+            const releaseLabels = labels.filter(l => l.startsWith('release.'));
 
             if (releaseLabels.length === 0) {
               await github.rest.issues.addLabels({
