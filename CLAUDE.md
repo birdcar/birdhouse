@@ -16,294 +16,91 @@ bun run dev          # Run from source
 
 ```
 src/
-├── index.ts              # Entry point (shebang, runs cli)
-├── cli.ts                # Clipanion CLI setup, registers commands
+├── index.ts              # Entry point
+├── cli.ts                # Clipanion CLI setup
 ├── commands/             # CLI commands (init, daily, render, publish, migrate)
 ├── config/               # Config loading and validation (typanion schemas)
-├── credentials/          # GitHub auth resolution (gh CLI, env, prompts)
-├── github/               # GitHub API client (Octokit wrapper, issues)
-├── tasks/                # Task parsing from markdown (remark plugins)
-├── template/             # Template rendering (remark, variable substitution)
-├── publish/              # Workflow/template publishing logic
-└── utils/                # Shared utilities (logger, paths, schedule)
+├── credentials/          # GitHub auth resolution
+├── github/               # GitHub API client (Octokit)
+├── tasks/                # Task parsing from markdown
+├── template/             # Template rendering (remark)
+├── publish/              # Workflow/template publishing
+└── utils/                # Shared utilities
 ```
-
-## Architecture
-
-### CLI Framework
-Uses [Clipanion](https://mael.dev/clipanion/) for command parsing. Commands extend `Command` class with static `paths` and `usage`, and implement `execute()`.
-
-### Config System
-- Config lives in `.birdhouse/config.yaml`
-- Schema defined with [typanion](https://github.com/arcanis/typanion) in `src/config/schema.ts`
-- Defaults in `src/config/defaults.ts`
-
-### GitHub Integration
-- Octokit for REST/GraphQL API
-- Credential resolution chain: gh CLI → CLI flags → env vars → git remote → interactive prompts
-- GraphQL required for issue pinning (not in REST API)
-
-### Template System
-- Uses [remark](https://remark.js.org/) for markdown processing
-- Custom remark plugin for variable substitution (`{{date}}`, `{{time}}`, etc.)
-- Templates stored in `.birdhouse/templates/`
 
 ## Code Conventions
 
-### TypeScript
-- Strict mode enabled
-- ES2022 target, NodeNext modules
-- Use `.js` extensions in imports (for ESM compatibility)
-- Prefer explicit types over inference for function signatures
-- Use `type` imports for type-only imports
-
-### Testing
-- Bun test runner (`bun:test`)
-- Test files colocated with source: `*.test.ts`
-- Tests use temp directories, clean up in `afterEach`
-- Run CLI commands via `cli.run(['command', 'args'])`
-
-### Error Handling
-- Custom error classes for specific scenarios (e.g., `CredentialResolutionError`)
-- Commands return exit codes (0 = success, 1 = error)
-- Use `logger.error()` for user-facing errors
-
-### File Organization
-- One export per file, re-exported through `index.ts`
-- Keep commands thin, delegate to domain modules
-- Colocate tests with source files
-
-## Commands
-
-| Command | Description |
-|---------|-------------|
-| `bh init` | Initialize `.birdhouse/` directory |
-| `bh daily` | Create daily thread issue |
-| `bh render <template>` | Render a template to stdout |
-| `bh publish` | Publish workflows/templates to repo |
-| `bh migrate` | Migrate tasks between daily threads |
-
-### Command Flags
-
-Commands that interact with GitHub (`daily`, `migrate`) support these flags:
-
-| Flag | Description |
-|------|-------------|
-| `--token, -t` | GitHub token (overrides auto-detection) |
-| `--repo, -r` | Target repository in `owner/repo` format |
-| `--no-prompt` | Disable interactive credential prompts |
-| `--dry-run, -n` | Preview without making changes |
-
-The `migrate` command also supports `--from <issue>` to specify source issue number.
-
-## Local Usage
-
-When running locally (not in GitHub Actions), credentials resolve in order:
-
-1. **GitHub CLI** - `gh auth token` and repo context from `gh`
-2. **CLI flags** - `--token` and `--repo` override everything
-3. **Environment** - `GITHUB_TOKEN` and `GITHUB_REPOSITORY`
-4. **Git remote** - Parses `origin` URL to detect repository
-5. **Interactive prompts** - Asks for missing credentials (TTY only)
-
-```bash
-# Recommended: authenticate with gh CLI
-gh auth login
-bh daily
-
-# Or explicit credentials
-bh daily --token ghp_xxx --repo owner/name
-
-# Or via environment
-GITHUB_TOKEN=ghp_xxx GITHUB_REPOSITORY=owner/name bh daily
-
-# CI/scripts: disable prompts
-bh daily --no-prompt
-```
-
-### GitHub Actions
-
-In workflows, the automatic `GITHUB_TOKEN` works - no PAT required:
-
-```yaml
-permissions:
-  contents: read
-  issues: write
-steps:
-  - uses: actions/checkout@v4
-  - uses: birdcar/birdhouse@main
-  - run: bh daily
-```
-
-## Dependencies
-
-### Runtime
-- `clipanion` + `typanion` - CLI framework and validation
-- `@actions/*` - GitHub Actions toolkit (for action mode)
-- `@octokit/*` - GitHub API (via `@actions/github`)
-- `remark` + `unified` - Markdown processing
-- `yaml` - Config parsing
-- `isomorphic-git` - Git operations
-
-### Dev
-- `bun` - Runtime, bundler, test runner
-- `typescript` - Type checking only (Bun handles compilation)
-- `husky` - Git hooks
+- **TypeScript**: Strict mode, ES2022, NodeNext modules, `.js` extensions in imports
+- **Testing**: Bun test runner, colocated `*.test.ts` files
+- **Organization**: One export per file, re-exported through `index.ts`
 
 ## Build & Release
 
-### Build Commands
-```bash
-bun run build        # Build ESM for npm (dist/index.js + types)
-bun run build:bin    # Build standalone binary
-bun run build:all    # Build all platform binaries
-```
-
 ### ⚠️ CRITICAL: Static Assets Must Be Inlined
 
-Bun's bundler does NOT automatically include files read via `Bun.file()` or filesystem APIs. Static assets (templates, workflows, etc.) must be inlined as TypeScript strings to work in bundled/compiled builds.
+Bun's bundler does NOT include files read via `Bun.file()`. Static assets must be inlined as TypeScript strings.
 
-**DON'T** read assets from the filesystem at runtime:
 ```typescript
-// BROKEN after bundling - file won't exist
-const assetsDir = join(import.meta.dir, 'assets');
-const content = await Bun.file(join(assetsDir, 'template.md')).text();
+// BROKEN - file won't exist after bundling
+const content = await Bun.file(join(import.meta.dir, 'template.md')).text();
+
+// CORRECT - inline in src/publish/assets.ts
+export const ASSET_CONTENTS = { 'template.md': `# Content...` };
 ```
 
-**DO** inline assets as code in `src/publish/assets.ts`:
-```typescript
-// WORKS - content is part of the bundle
-export const ASSET_CONTENTS: Record<string, string> = {
-  'templates/daily.md': `# Template content here...`,
-};
-```
+When adding publishable assets:
+1. Add file to `src/publish/assets/` for source control
+2. Add content to `ASSET_CONTENTS` in `src/publish/assets.ts`
 
-When adding new publishable assets:
-1. Add the file to `src/publish/assets/` for source control
-2. Add the content to `ASSET_CONTENTS` in `src/publish/assets.ts`
-3. Reference via the inlined map, not filesystem reads
+### ⚠️ CRITICAL: npm OIDC Publishing
 
-### ⚠️ CRITICAL: Do Not Break the Release Workflow
-
-The release workflow (`.github/workflows/release.yml`) uses **npm OIDC Trusted Publishing** for authentication. This means:
-
-- **NEVER add `NODE_AUTH_TOKEN` or `NPM_TOKEN` environment variables** to npm publish steps
-- Setting these variables (even empty) breaks OIDC authentication
-- npm authenticates automatically via GitHub's OIDC token - no explicit token needed
-- The workflow has `id-token: write` permission which enables this
-
-If you need to modify the publish job, preserve this pattern:
-```yaml
-# CORRECT - no token, OIDC handles auth
-- name: Publish
-  run: npm publish --provenance --access public
-
-# WRONG - breaks OIDC auth
-- name: Publish
-  env:
-    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  # DO NOT ADD THIS
-  run: npm publish --provenance --access public
-```
+The release workflow uses OIDC Trusted Publishing. **NEVER** add `NODE_AUTH_TOKEN` or `NPM_TOKEN` to publish steps - it breaks authentication.
 
 ### Release Process
 
-**Automated via PR labels** - Versions are managed automatically.
+PRs auto-release on merge based on labels (all labels use `release.*` prefix):
 
-1. Create PR with changes
-2. Release label is auto-applied if missing:
-   - No label → auto-applies `release.patch`
-   - `release.major` / `release.breaking` - Breaking changes
-   - `release.minor` / `release.feature` - New features
-   - `release.patch` / `release.fix` - Bug fixes
-   - `release.skip` / `skip-release` / `no-release` - Explicit opt-out
-3. Merge PR to `main`
-4. Workflow automatically:
-   - Creates git tag and GitHub release from PR title
-   - Sets package.json version from tag (overwrites any manual changes)
-   - Builds platform binaries
-   - Publishes to npm (OIDC trusted publishing)
-5. (Optional) Trigger Homebrew formula update immediately:
-   ```bash
-   gh workflow run update-formula.yml --repo birdcar/homebrew-tap
-   ```
-   The homebrew-tap also polls daily at 6am UTC, so this is only needed if you want the update right away.
+| Label | Version Bump |
+|-------|--------------|
+| `release.major`, `release.breaking` | Major (x.0.0) |
+| `release.minor`, `release.feature` | Minor (0.x.0) |
+| `release.patch`, `release.fix` | Patch (0.0.x) |
+| `release.skip`, `release.docs`, `release.ci` | No release |
+
+If no label is present, `release.patch` is auto-applied.
 
 ### PR Format
 
-**IMPORTANT:** The PR title becomes the changelog entry. Keep it clean and descriptive.
+PR title becomes the changelog entry. Use conventional commits (`feat:`, `fix:`, `docs:`, `chore:`).
 
 ```
 ## Summary
 Brief description of what changed and why.
 
 ---
-(Everything below the --- is ignored in releases)
+(Everything below --- is ignored in releases)
 
 ## Test plan
 - [ ] Tests pass
-- [ ] Manual verification done
 ```
 
-**Rules for PRs:**
-- Do NOT add "Generated with Claude Code" or similar attribution
-- Do NOT put task checklists above the `---` separator
-- The PR title should follow conventional commits (`feat:`, `fix:`, `docs:`, `chore:`)
-- Only content above `---` may appear in changelogs
+**Rules:**
+- No "Generated with Claude Code" attribution
+- No task checklists above `---`
 
-**Self-healing behavior:**
-- Manual changes to `package.json` version are overwritten by the tag
-- No validation gates that can fail - the workflow handles everything
+### Homebrew Updates
 
-### Pre-commit Hooks
-
-Husky runs tests before each commit. Bypass with `git commit --no-verify` (not recommended).
-
-### Changelog
-
-- Entries are generated automatically from PR titles
-- Use conventional commit prefixes: `feat:`, `fix:`, `docs:`, `chore:`
-- No manual changelog editing required - just write good PR titles
-
-## Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `GITHUB_TOKEN` | GitHub API token (fallback if gh CLI unavailable) |
-| `GITHUB_REPOSITORY` | Repository in `owner/repo` format |
-| `CI` / `GITHUB_ACTIONS` | Skips pre-commit hooks in CI |
+The homebrew-tap polls daily at 6am UTC. For immediate updates:
+```bash
+gh workflow run update-formula.yml --repo birdcar/homebrew-tap
+```
 
 ## Common Tasks
 
-### Adding a New Command
+### Adding a Command
 
-1. Create `src/commands/newcmd.ts`:
-```typescript
-import { Command, Option } from 'clipanion';
-
-export class NewCommand extends Command {
-  static override paths = [['newcmd']];
-  static override usage = Command.Usage({
-    description: 'What it does',
-    examples: [['Example', 'bh newcmd --flag']],
-  });
-
-  flag = Option.Boolean('--flag,-f', false, {
-    description: 'Flag description',
-  });
-
-  async execute(): Promise<number> {
-    // Implementation
-    return 0;
-  }
-}
-```
-
-2. Register in `src/cli.ts`:
-```typescript
-import { NewCommand } from './commands/newcmd.js';
-cli.register(NewCommand);
-```
-
+1. Create `src/commands/newcmd.ts` extending `Command`
+2. Register in `src/cli.ts`
 3. Export from `src/commands/index.ts`
 4. Add tests in `src/commands/newcmd.test.ts`
 
@@ -311,25 +108,3 @@ cli.register(NewCommand);
 
 1. Update schema in `src/config/schema.ts`
 2. Update defaults in `src/config/defaults.ts`
-3. Update type exports if needed
-
-### Working with GitHub API
-
-```typescript
-import { getGitHubClient } from '../github/index.js';
-import { createIssue } from '../github/issues.js';
-
-const client = await getGitHubClient({ token, repo });
-const issue = await createIssue(client, { title, body, labels });
-```
-
-## Troubleshooting
-
-### "GitHub credentials required"
-Run `gh auth login` or provide `--token` and `--repo` flags.
-
-### Tests failing locally
-Ensure you're in the repo root. Tests create temp directories relative to test file location.
-
-### Build failing
-Check TypeScript errors: `bun run typecheck`
